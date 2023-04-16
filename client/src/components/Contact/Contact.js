@@ -22,7 +22,6 @@ import {
 import Axios from "../../api";
 import AlertModal from "../Modal/AlertModal";
 import Modal from "../Modal/Modal";
-import Navbar from "../Navbar/Navbar";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -44,19 +43,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const Contact = () => {
-  const [contacts, setContacts] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [showAlert, setShowAlert] = React.useState(false);
-  const [alertMessage, setAlertMessage] = React.useState(null);
-  const [isError, setIsError] = React.useState(false);
+const Contact = ({ contacts, getContacts, isLoading, showAlert, setShowAlert, isError, setIsError, alertMessage, setAlertMessage }) => {
+
   const [contactId, setContactId] = React.useState(null);
   const [showAlertModal, setShowAlertModal] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const [name, setName] = React.useState(null);
   const [contact, setContact] = React.useState(null);
   const [updateContact, setUpdateContact] = React.useState(false);
-  const [searchTerm, setSearchTerm] = React.useState("")
 
   const updateContactHandler = async () => {
     await Axios({
@@ -117,39 +111,7 @@ const Contact = () => {
     getContacts();
   };
 
-  const getContacts = async () => {
-    await Axios("/contact")
-      .then((res) => {
-        setContacts(res.data.data);
-      })
-      .catch((err) => {
-        setIsError(true);
-        setShowAlert(true);
-        setAlertMessage(err.response.data.message);
-      });
-    setIsLoading(false);
-  };
 
-  const searchHandler = async () => {
-    await Axios(`/contact?searchTerm=${searchTerm}`)
-      .then((res) => {
-        setContacts(res.data.data);
-      })
-      .catch((err) => {
-        setIsError(true);
-        setShowAlert(true);
-        setAlertMessage(err.response.data.message);
-      });
-    setIsLoading(false);
-  };
-
-  React.useEffect(() => {
-    getContacts();
-  }, []);
-
-  React.useEffect(() => {
-    searchHandler();
-  }, [searchTerm]);
 
   if (isLoading) {
     return (
@@ -168,7 +130,6 @@ const Contact = () => {
 
   return (
     <Stack sx={{ width: "100%" }}>
-      <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         open={showAlert}
